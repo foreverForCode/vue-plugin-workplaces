@@ -9,6 +9,9 @@
 .state-refreshed .tloader-msg:after {
     content: '刷新成功'
 }
+.state-nomore .tloader-msg:after {
+    content: '没有更新的数据'
+}
 
 .tloader-loading:after {
     content: '正在加载...'
@@ -105,6 +108,11 @@
     -webkit-transition: opacity 1s;
     transition: opacity 1s
 }
+.state-nomore .tloader-msg {
+    opacity: 1;
+    -webkit-transition: opacity 1s;
+    transition: opacity 1s
+}
 
 .state-refreshed .tloader-msg i {
     display: inline-block;
@@ -120,6 +128,7 @@
     position: relative
 }
 
+
 .state-refreshed .tloader-msg i:before {
     content: '';
     position: absolute;
@@ -132,6 +141,18 @@
     -webkit-transform: rotate(40deg);
     transform: rotate(40deg)
 }
+/* .state-nomore .tloader-msg i:before {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 7px;
+    height: 11px;
+    width: 5px;
+    border: solid;
+    border-width: 0 1px 1px 0;
+    -webkit-transform: rotate(40deg);
+    transform: rotate(40deg)
+} */
 
 .state-refreshing .tloader-body {
     -webkit-transform: translate3d(0, 3rem, 0);
@@ -141,6 +162,10 @@
 }
 
 .state-refreshed .tloader-body {
+    -webkit-animation: refreshed 1s;
+    animation: refreshed 1s
+}
+.state-nomore .tloader-body {
     -webkit-animation: refreshed 1s;
     animation: refreshed 1s
 }

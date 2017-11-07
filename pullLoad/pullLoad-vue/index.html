@@ -90,7 +90,7 @@
           return html;
         }
       },
-     
+
       mounted: function () {
         this.container = this.createAll(this.dataList);
         var that = this;
@@ -98,23 +98,23 @@
           container: document.body,
           wrapper: document.getElementById("test_div"),
           downEnough: 100,
-          onRefresh: function (success, error) {
+          onRefresh: function (action) {
             console.info("实际代码 onRefresh")
             setTimeout(function () {
               that.container = that.createAll(that.dataList);
-              success();
+              action(false);                                    //true -----> 加载完成  false -----> 没有更新的数据了
             }, 2000);
           },
-          onLoadMore: function (success, error) {
+          onLoadMore: function (action) {
             console.info("实际代码 onLoadMore")
             setTimeout(function () {
               that.dataList.push(that.dataList[that.loadMoreIndex]);
               that.container = that.createAll(that.dataList);
-              // if(--loadMoreIndex){
-              success(false);
-              // } else{
-              //   success(true);
-              // }
+              if (--that.loadMoreIndex) {
+                action(false);                                 // true ------> 加载更多   false ----> 没有数据了
+              } else {
+                action(true);
+              }
             }, 500);
           },
           distanceBottom: 300,
