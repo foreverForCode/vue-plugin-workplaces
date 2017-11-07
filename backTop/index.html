@@ -1,0 +1,84 @@
+﻿<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport" />
+
+<title>jeAjax</title>
+<script src="../js/vue.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="backtop.js"></script>
+<style>
+body{margin:0; padding:0;}
+@-webkit-keyframes spin {
+  0%   { -webkit-transform: rotate(0deg); transform: rotate(0deg);}
+  100% { -webkit-transform: rotate(360deg); transform: rotate(360deg);}
+}
+@keyframes spin {
+  0%   { -webkit-transform: rotate(0deg); transform: rotate(0deg);}
+  100% { -webkit-transform: rotate(360deg); transform: rotate(360deg);}
+}
+.loadbox{width:60px;height:60px; background-color:rgba(0,0,0,0.8); position: fixed; top:50%; left:50%; margin:-30px 0 0 -30px; display:none; }
+.loadbox .loading{width:30px;height:30px; position: absolute; top:50%; left:50%; margin:-15px 0 0 -15px;-webkit-animation: spin 2s infinite linear;animation: spin 2s infinite linear;-webkit-background-size:30px 30px;background-size:30px 30px;background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAAolBMVEUAAAD///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////8ELnaCAAAANXRSTlMABgn1p+xKKwL73dO/HBIO+J+HWU5FPyIZ8KR3XTnl4cqTbmYn6Nm1nJeMfmJSMc6rj3LFajrKQIEAAAJRSURBVFjD7dfZlqIwEAbgQjYFBAUFZBNxbfd2ut7/1aYlAuGkQcjVnDP9XWKCISl+S2il2sYy2e3XJnAZhjIS+pxr/hFLC4XjBmukbDfQl79E2hT6OmONPIaeVljXex8lrHPgrfF5JR0eVyCmWDd7e2oPsmvilDxtiDUTFdoJH1i4ec8LVxFpxgDahczgQ9MTCAKwvAVS1s9L5g0rn1AYhIZxYpfzhbS9kN/UwJfRUSi/PsjLqrYIdr07P79oZbr4PXuxp2rAJXd02089GRfrjZ3zpfYaRGRE1F53utkcEZP87WQO1UGaNIRG2fcdRg/msrnrXPeubbvAUkT6zHhEZSV8DIBLfJefNZ+eh8BLvaydeAD/J0/dWMAvMhJRvp184GNKSOhX4CFU76G26TVxZtszof4WST1KyJLyGRbssSJ60JlNptiwrCdnV5b2emzY1n99uvJf82TQkeJ2bx7+kBlGLcu0N9XE5oeogCpjKYMeZulikT43zRmVQSJAHwNVHZDF6GQ7TtxBYjqr+zTbwK9/Qhx+2jP+WB/f85JK5+8CVFG8H+enRSoorfV3TBCTI71Opi9c+i1BFpAxAVP2G5nusRpdijEX5pNunXnZTR6YHwc6XKFR0DjGnWDp1KEfDZndvVVtcUyFZzxXh/RZvUJYG7MZNWE7HOGhTUaiMadXmsfxLgZWRM5hVHU4wuFVGRGdx1kQZD8f9HWVavpd+eFfj+xBN5ZvstFNtpWHucVCADyshCotLnuquLnMR1XzzeeL9L+7K/ByJW2rH8fQ7C8vcqaK+hvWxAAAAABJRU5ErkJggg=="); background-position:center center; background-repeat:no-repeat;}
+#demojson{ overflow:hidden; margin:0; padding:0;}
+#demojson li{ list-style:none;}
+#demojson li img{ width:100%;}
+.backtop {  
+    width: 40px;
+    height: 40px;
+    background-color: rgba(0,0,0,0.5);
+    -webkit-border-radius: 50%;
+    border-radius: 50%;
+    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAABXElEQVRo3u3Y0ZWCMBAF0FdCSrCElLAlWAIdSAl2IB1IB9KBJUgnpoO3HzvkZBFCwEQ+nOEPI3PBvNEjoKX1r9iwdDVxQFcc0MUBhj+FD6P7TEsr7+CytPu2f/K5G4GVn27Vvu33IPD6MuOvn2tupL2Tr66O7o/wkTlPw4e0tzyTJM+0QngUJ9BK+54GGAAADXshHErHzrcPAQGhXCx5lPatPxMAAICtEI4lY9cE50aA4Cdd7ljyMnXhV0AAveRPvRs/2ikAwGqIZa7Y3YfYvbw2CQB8LO9vx9Knvp/a23MAgNbH8h3COHbpgCyx9O3bubuIAQAaGdXbCH43t5E1UUAwGdbHkid5Yx1dtQgAWMuVTutjt+hOAQTPMi2WNLzNxW4bIIjlLSET8qm5lI2TCggI7fLSej522wE+ljVy1hpAkVKAAhSgAAUoQAEKUIACFMADHV3RP+a0vqB+AS2zp4xGwi6DAAAAAElFTkSuQmCC");
+    background-position: center center;
+    background-repeat: no-repeat;
+    -webkit-background-size: 55%!important;
+    background-size: 55%!important;
+    opacity: 0.8;
+}
+</style>
+</head>
+
+<body>
+<div class="loadbox" id="loading"><div class="loading"></div></div>
+<img id="weather">
+<div style="padding: 10px;">
+   <ul id="demojson">
+      <li v-for="(val,idx) in list"><img :src="val" /></li>
+   </ul>
+</div>
+<script type="text/javascript">
+var isImg = document.getElementById("weather").tagName
+
+   new Vue({
+       el:"#demojson",
+       data: {
+           loadPic: 'http://img.zcool.cn/community/0161f656b0663e6ac7256cb052d31a.gif',
+           list: [
+               'http://pics.sc.chinaz.com/files/pic/pic9/201702/zzpic1399.jpg',
+               'http://pics.sc.chinaz.com/files/pic/pic9/201612/fpic9875.jpg',
+               'http://pics.sc.chinaz.com/files/pic/pic9/201610/fpic8220.jpg',
+               'http://pics.sc.chinaz.com/files/pic/pic9/201611/fpic8607.jpg',
+               'http://pics.sc.chinaz.com/files/pic/pic9/201611/fpic8745.jpg',
+               'http://pics.sc.chinaz.com/files/pic/pic9/201701/zzpic437.jpg',
+               'http://pics.sc.chinaz.com/files/pic/pic9/201610/apic23881.jpg',
+               'http://pics.sc.chinaz.com/files/pic/pic9/201608/fpic5949.jpg',
+               'http://pics.sc.chinaz.com/files/pic/pic9/201608/fpic6419.jpg',
+               'http://pics.sc.chinaz.com/files/pic/pic9/201609/fpic7403.jpg',
+               'http://pics.sc.chinaz.com/files/pic/pic9/201609/fpic7317.jpg',
+               'http://pics.sc.chinaz.com/files/pic/pic9/201605/fpic1376.jpg',
+               'http://pics.sc.chinaz.com/files/pic/pic9/201606/apic21195.jpg',
+               'http://pics.sc.chinaz.com/files/pic/pic9/201606/apic21465.jpg',
+               'http://pics.sc.chinaz.com/files/pic/pic9/201604/apic20040.jpg',
+               'http://pics.sc.chinaz.com/files/pic/pic9/201604/fpic914.jpg',
+               'http://pics.sc.chinaz.com/files/pic/pic9/201604/fpic873.jpg',
+               'http://pics.sc.chinaz.com/files/pic/pic9/201605/fpic1208.jpg'
+           ]
+       },
+       mounted: function () {
+           var that = this;
+           that.$backTop();
+       }
+   })
+</script>
+</body>
+</html>

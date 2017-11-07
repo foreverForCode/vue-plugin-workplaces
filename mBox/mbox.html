@@ -1,0 +1,149 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>首页</title>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="telephone=no" name="format-detection" />
+    <meta content="email=no" name="format-detection" />
+    <link href="css/mbox.css" type="text/css" rel="stylesheet">
+    <script src="../js/vue.min.js" type="text/javascript"></script>
+    <script src="vue-mbox.js" type="text/javascript"></script>
+    <style>
+
+        .disn{ display:none;}
+        /*start	
+        对于正常方向的框，每个子元素的上边缘沿着框的顶边放置。
+        对于反方向的框，每个子元素的下边缘沿着框的底边放置。
+        测试
+        end	
+        对于正常方向的框，每个子元素的下边缘沿着框的底边放置。
+        对于反方向的框，每个子元素的上边缘沿着框的顶边放置。
+        测试
+        center	
+        均等地分割多余的空间，一半位于子元素之上，另一半位于子元素之下。*/
+        .main{
+            height:100%;width:100%;position:absolute;
+            display:-webkit-box;-webkit-box-orient:vertical;-webkit-box-align:center;-webkit-box-pack:center;
+        }
+        .content{
+            background:#ccc;height:200px;width:80%;
+        }
+        .testbox{border: 1px #dfdfdf solid; border-top: none;font-size:16px;overflow: hidden;}
+        .testbox a{display:inline-block;width: 49.8%;float:left;height: 40px;line-height: 40px;border-top: 1px #dfdfdf solid;border-right: 1px #dfdfdf solid;text-align: center;color: #0a60d6;
+        }
+        .testbox a:nth-child(2n){border-right:none}
+        .actionsheet-item {
+            display: block;text-align: center;
+            position: relative;text-decoration: none;
+            font-size: 14px;
+            color: #555;
+            height:40px;
+            line-height: 40px;
+            background-color: #FFF;
+        }
+        .actionsheet-item:after {
+            content: '';
+            position: absolute;
+            z-index: 2;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            border-bottom: 1px solid #D9D9D9;
+            -webkit-transform: scaleY(0.5);
+            transform: scaleY(0.5);
+            -webkit-transform-origin: 0 100%;
+            transform-origin: 0 100%;
+        }
+        .actionsheet-item:last-child:after{height: 0px;border-bottom:none;}
+    </style>
+</head>
+
+<body>
+
+<div class="testbox" id="app">
+    <a href="javascript:;" @click="modBox">点击弹出messageBox</a>
+    <a href="javascript:;" @click="alert">open-02</a>
+    <a href="javascript:;" @click="yesClick">toast-success</a>
+    <a href="javascript:;" @click="errClick">toast-error</a>
+    <a href="javascript:;" id="none">toast-none</a>
+    <a href="javascript:;" id="loading">toast-loading</a>
+    <a href="javascript:;" id="webup">actSheet-webup</a>
+    <a href="javascript:;" id="itemup">actSheet-itemup</a>
+    <a href="javascript:;" id="alert">alert</a>
+    <a href="javascript:;" id="notice">notice</a>
+    
+</div>
+    <ul>
+        <li class="tt" id="ddd">点我看效果</li>
+        <li id="yy">toggleClass</li>
+    </ul>
+</div>
+<p id="test" >对于正常方向的框，每个子元素的上边缘沿着框的顶边放置对于正常方向的框，原创弹出层插件对于正常方向的框，每个子元素的上边缘沿着框的顶边放置对于正常方向的框，原创弹出层插件对于正常方向的框，每个子元素的上边缘沿着框的顶边放置对于正常方向的框，原创弹出层插件对于正常方向的框，每个子元素的上边缘沿着框的顶边放置对于正常方向的框，原创弹出层插件对于正常方向的框，每个子元素的上边缘沿着框的顶边放置对于正常方向的框，原创弹出层插件对于正常方向的框，每个子元素的上边缘沿着框的顶边放置对于正常方向的框，原创弹出层插件对于正常方向的框，每个子元素的上边缘沿着框的顶边放置对于正常方向的框，原创弹出层插件对于正常方向的框，每个子元素的上边缘沿着框的顶边放置对于正常方向的框，原创弹出层插件对于正常方向的框，每个子元素的上边缘沿着框的顶边放置对于正常方向的框，原创弹出层插件对于正常方向的框，每个子元素的上边缘沿着框的顶边放置对于正常方向的框，原创弹出层插件对于正常方向的框，每个子元素的上边缘沿着框的顶边放置对于正常方向的框，原创弹出层插件对于正常方向的框，每个子元素的上边缘沿着框的顶边放置对于正常方向的框，原创弹出层插件对于正常方向的框，每个子元素的上边缘沿着框的顶边放置对于正常方向的框，原创弹出层插件对于正常方向的框，每个子元素的上边缘沿着框的顶边放置对于正常方向的框，原创弹出层插件对于正常方向的框，每个子元素的上边缘沿着框的顶边放置对于正常方向的框，原创弹出层插件对于正常方向的框，每个子元素的上边缘沿着框的顶边放置对于正常方向的框，原创弹出层插件</p>
+<div id="action" style="display: none;">
+    <a href="#" class="actionsheet-item">示例菜单 - 01</a>
+    <a href="#" class="actionsheet-item">示例菜单 - 02</a>
+    <a href="#" class="actionsheet-item">示例菜单 - 03</a>
+    <a href="#" class="actionsheet-item">示例菜单 - 04</a>
+</div>
+</body>
+<script type="text/javascript">
+    new Vue({
+        el:'#app',
+        created: function () {
+            setTimeout(function() {
+                //弹出成功后的回调
+                
+            }, 2000);
+        },
+        methods:{
+            modBox:function(){
+                var that = this;
+                that.$mBox({
+                    title:["我就是标题！",{"backgroundColor":"#3293E0",color:"#fff"}],
+                    width:"90%",
+                    height:"50%",
+                    content:"对于正常方向的框，每个子元素的上边缘沿着框的顶边放置对于正常方向的框",
+                    yesCall:{
+                        name:'确定',
+                        fun:function (idx) {
+                            that.$mBox.closeAll();
+                        }
+                    },
+                    noCall:{
+                        name:'取消',
+                    }
+                });
+            },
+            alert:function () {
+                var that = this;
+                that.$mBox({
+                    title:false,
+                    width:"90%",
+                    content:"对于正常方向的框，每个子元素的上边缘沿着框的顶边放置对于正常方向的框",
+                    yesCall:{
+                        name:'确定',
+                        fun:function (idx) {
+                            
+                        }
+                    },
+                    noCall:{
+                        name:'取消',
+                    }
+                });
+            },
+            yesClick:function () {
+                this.$mBox.toast({content:'保存成功了',type:'success',time:0})
+            },
+            errClick:function () {
+                this.$mBox.toast({content:'保存出错了',type:'error',time:0})
+            }
+        }
+    })
+    
+</script>
+
+</html>

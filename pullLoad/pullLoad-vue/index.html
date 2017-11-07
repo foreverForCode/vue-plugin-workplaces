@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>pullload 以 body 为滚动容器</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    li {
+      font-size: 20px;
+      width: 100%;
+      list-style: none;
+    }
+
+    img {
+      width: 100%;
+    }
+
+    div,
+    .test-ul,
+    p {
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+  <link rel="stylesheet" href="css/pullload.css">
+</head>
+
+<body>
+  <div id="test_div" class="">
+    <div class="tloader-symbol">
+      <p class="tloader-msg"><i></i></p>
+      <p class="tloader-loading">
+        <i class="ui-loading"></i>
+      </p>
+    </div>
+    <div class="tloader-body">
+      <ul class="test-ul" v-html="container">
+      </ul>
+    </div>
+    <div class="tloader-footer">
+      <p class="tloader-btn"></p>
+      <p class="tloader-loading">
+        <i class="ui-loading"></i>
+      </p>
+    </div>
+  </div>
+  <script src="./lib/vue.min.js"></script>
+  <script src="./pullload.js"></script>
+
+  <script>
+    var app = new Vue({
+      el: '#test_div',
+      data: {
+        dataList: [
+          "http://img1.gtimg.com/15/1580/158031/15803178_1200x1000_0.jpg",
+          "http://img1.gtimg.com/15/1580/158031/15803179_1200x1000_0.jpg",
+          "http://img1.gtimg.com/15/1580/158031/15803181_1200x1000_0.jpg",
+          "http://img1.gtimg.com/15/1580/158031/15803182_1200x1000_0.jpg",
+          "http://img1.gtimg.com/15/1580/158031/15803183_1200x1000_0.jpg",
+          "http://img1.gtimg.com/15/1580/158031/15803184_1200x1000_0.jpg",
+          "http://img1.gtimg.com/15/1580/158031/15803186_1200x1000_0.jpg",
+          "http://img1.gtimg.com/15/1580/158031/15803187_1200x1000_0.jpg",
+          "http://img1.gtimg.com/15/1580/158031/15803189_1200x1000_0.jpg",
+          "http://img1.gtimg.com/15/1580/158031/15803190_1200x1000_0.jpg",
+          "http://img1.gtimg.com/15/1580/158031/15803191_1200x1000_0.jpg",
+          "http://img1.gtimg.com/15/1580/158031/15803193_1200x1000_0.jpg",
+          "http://img1.gtimg.com/15/1580/158031/15803194_1200x1000_0.jpg",
+        ],
+        container: '',
+        loadMoreIndex: 3
+      },
+      methods: {
+        createLi: function (src) {
+          return '<li><img src="' + src + '" alt=""></li>'
+        },
+        createAll: function (arr) {
+          var index = 0,
+            len = arr.length,
+            html = "";
+          for (index; index < len; index++) {
+            html += this.createLi(arr[index]);
+          }
+          return html;
+        }
+      },
+     
+      mounted: function () {
+        this.container = this.createAll(this.dataList);
+        var that = this;
+        var installObj = this.$pullloads({
+          container: document.body,
+          wrapper: document.getElementById("test_div"),
+          downEnough: 100,
+          onRefresh: function (success, error) {
+            console.info("实际代码 onRefresh")
+            setTimeout(function () {
+              that.container = that.createAll(that.dataList);
+              success();
+            }, 2000);
+          },
+          onLoadMore: function (success, error) {
+            console.info("实际代码 onLoadMore")
+            setTimeout(function () {
+              that.dataList.push(that.dataList[that.loadMoreIndex]);
+              that.container = that.createAll(that.dataList);
+              // if(--loadMoreIndex){
+              success(false);
+              // } else{
+              //   success(true);
+              // }
+            }, 500);
+          },
+          distanceBottom: 300,
+        });
+      }
+    });
+  </script>
+</body>
+
+</html>
