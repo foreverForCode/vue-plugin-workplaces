@@ -325,6 +325,7 @@ var pullLoad = Vue.extend({
          */
         setClassName: function (state) {
             this.loaderState = state;
+            console.log(this.wrapper.className,'问题出在这里')
             this.wrapper.className = 'tloader state-' + state; // '.test-div'
         },
         /**
