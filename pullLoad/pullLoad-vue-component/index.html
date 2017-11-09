@@ -35,8 +35,8 @@
 </head>
 
 <body>
-  <div id="test_div" :class="classchangevalue">
-    <pull-load :options="definedOpts" @classchange="parentclasschange" @onloadmore="onloadmoreenvent" @onpulldownrefresh="pulldownevent">
+  <div id="test_div">
+    <pull-load :options="definedOpts" @onloadmore="onloadmoreenvent" @onpulldownrefresh="pulldownevent">
       <li slot="item" slot-scope="props" @click="test">
         <img :src="props.text" alt="">
       </li>
@@ -46,7 +46,6 @@
     var app = new Vue({
       el: '#test_div',
       data: {
-        classchangevalue: '',
         definedOpts: {
           container: document.body,
           wrapper: document.querySelector("#test_div"),
@@ -69,14 +68,12 @@
           "http://img1.gtimg.com/15/1580/158031/15803193_1200x1000_0.jpg",
           "http://img1.gtimg.com/15/1580/158031/15803194_1200x1000_0.jpg",
         ],
+        index: 3  // 演示无限加载
 
       },
       methods: {
         test: function () {
           alert(1213)
-        },
-        parentclasschange(msg) {
-          this.classchangevalue = msg;
         },
         pulldownevent: function (action) {
           setTimeout(function () {
@@ -84,12 +81,12 @@
           }, 2000)
         },
         onloadmoreenvent: function (action) {
-          var index = 3;
-          if (index--) {
-            this.definedOpts.dataList.push(this.dataList[index]);
+
+          if (this.index--) {
+            this.definedOpts.dataList.push(this.dataList[this.index]);
             action(false)
           } else {
-              action(true)
+            action(true)
           }
 
         }

@@ -84,6 +84,7 @@ var pullLoad = Vue.extend({
     data: function () {
         return {
             pullupstyle: null,
+            classchangevalue:''
 
         }
     },
@@ -91,10 +92,9 @@ var pullLoad = Vue.extend({
         opts: function () {
             return extend(defaultConfig, this.options)
         },
-
     },
     template: `
-    <div>
+    <div class="tloader" :class="classchangevalue">
         <div class="tloader-symbol">
             <p class="tloader-msg"><i></i></p>
             <p class="tloader-loading">
@@ -262,9 +262,10 @@ var pullLoad = Vue.extend({
          * description  给 '.test-div' 重写类名     
          */
         setClassName: function (state) {
-            this.loaderState = state;           
-            this.wrapper.className = 'tloader state-' + state; // '.test-div'
-            this.$emit('classchange', this.wrapper.className);
+            this.loaderState = state;       
+            var cls =  state == "" ? "" : "state-" + state   
+            this.wrapper.className = '' + cls; // '.test-div'
+            this.classchangevalue = this.wrapper.className
         },
         /**
          * setEndState  设置动作结束状态 height:0
@@ -303,7 +304,6 @@ var pullLoad = Vue.extend({
                 return false;
             }
             event.preventDefault();
-
             var diff = y - startY,
                 loaderState;
             if (diff < 0) {
@@ -319,24 +319,19 @@ var pullLoad = Vue.extend({
             this.setChange(diff, loaderState);
         },
         /**
-         * onPullDownRefresh 触发下拉刷新
-         * 
+         * onPullDownRefresh 触发下拉刷新 
          * */
         onPullDownRefresh: function () {
-
             var that = this;
-
             if (this.loaderState === STATS.refreshing) {
                 return false;
-
             } else if (this.loaderState === STATS.pulling) {
                 this.setEndState();
-
             } else {
                 this.setChange(0, STATS.refreshing);
                 this.resetLoadMore();
-
-                this.$emit('onpulldownrefresh', function (status) { //status------> true 刷新成功... || false -----> 没有更新数据
+                //status------> true 刷新成功... || false -----> 没有更新数据
+                this.$emit('onpulldownrefresh', function (status) { 
                     if (status == true) {
                         that.setChange(0, STATS.refreshed);
                         setTimeout(function () {
@@ -372,11 +367,6 @@ var pullLoad = Vue.extend({
                 that.setEndState();
                 if (status) {
                     that.setNoMoreState();
-                    setTimeout(function () {
-                        that.pullupstyle = {
-                            display: 'none'
-                        }
-                    }, 2000)
                 }
             });
         },
