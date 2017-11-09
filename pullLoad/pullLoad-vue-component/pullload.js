@@ -3,25 +3,6 @@ function extend(obj1, obj2) {
     return Object.assign(JSON.parse(JSON.stringify(obj1)), obj2)
 }
 
-function addEvent(obj, type, fn) {
-    if (obj.attachEvent) {
-        obj['e' + type + fn] = fn;
-        obj[type + fn] = function () {
-            obj['e' + type + fn](window.event);
-        }
-        obj.attachEvent('on' + type, obj[type + fn]);
-    } else
-        obj.addEventListener(type, fn, false);
-}
-
-function removeEvent(obj, type, fn) {
-    if (obj.detachEvent) {
-        obj.detachEvent('on' + type, obj[type + fn]);
-        obj[type + fn] = null;
-    } else
-        obj.removeEventListener(type, fn, false);
-}
-
 // 数组copy部分
 function asArray(quasiArray, start) {
     var result = [],
@@ -32,19 +13,6 @@ function asArray(quasiArray, start) {
     return result;
 }
 
-function bind(func, context) {
-    if (arguments.length < 2 && typeof arguments[0] === "undefined") {
-        return func;
-    }
-
-    var __method = func;
-    var args = asArray(arguments, 2);
-
-    return function () {
-        var array = args.concat(asArray(arguments, 0));
-        return __method.apply(context, array);
-    };
-}
 /* bindAll 批量绑定
  * @param fns 待绑定的函数名称
  * @param obj 待绑定的实例对象
@@ -57,14 +25,12 @@ function bindAll(fns, obj, context) {
     if (context === undefined) {
         context = obj;
     }
-
     for (; index < len; index++) {
         var key = fns[index];
         if (typeof obj[key] === 'function') {
             obj[key] = b(obj[key], context);
         }
     }
-
     function b(func, context) {
         return function () {
             return func.apply(context, asArray(arguments, 0));
@@ -107,8 +73,6 @@ var STATS = {
         loaderSymbol: null,
         loaderBtn: null,
         downEnough: 100, // 下拉满足刷新的距离
-        onRefresh: function () {}, // 更新触发
-        onLoadMore: function () {}, // 加载更多触发
         startX: 0, // touchStart  clientX
         startY: 0, // touchStart  clientY
         loaderState: STATS.init, // 加载状态
@@ -119,7 +83,7 @@ var pullLoad = Vue.extend({
     props: ["options"],
     data: function () {
         return {
-
+            pullupstyle: null,
 
         }
     },
@@ -144,7 +108,7 @@ var pullLoad = Vue.extend({
             </ul>
         </div>
         <div class="tloader-footer">
-            <p class="tloader-btn"></p>
+            <p class="tloader-btn" :style="pullupstyle"></p>
             <p class="tloader-loading">
             <i class="ui-loading"></i>
             </p>
@@ -152,40 +116,26 @@ var pullLoad = Vue.extend({
     </div>
             `,
     methods: {
-        alerts: function () {
-            alert(123123);
-        },
-        touchstartEvent:function(event){
-            
-            
+        touchstartEvent: function (event) {
             this.onTouchStart(event);
         },
-        touchmoveEvent:function(){
-           
+        touchmoveEvent: function () {
+
             this.onTouchMove(event)
         },
-        touchendEvent:function(){
-           
+        touchendEvent: function () {
+
             this.onTouchEnd(event);
         },
 
         init: function () {
             var opts = this.opts;
-            
             this.container = opts.container;
             this.wrapper = opts.wrapper;
-            
-            
-
             //将 extendFns 数组所列函数 及 'onTouchStart','onTouchMove','onTouchEnd' 进行 this 绑定。
             bindAll(extendFns.concat(['onTouchStart', 'onTouchMove', 'onTouchEnd']), this);
             //创建参数对象把 extendFns 设置成参数，同时把 opts 传递进来的参数整合上。
 
-            
-            
-            // this.$on("touchstart", this.onTouchStart);
-            // this.$on("touchmove", this.onTouchMove);
-            // this.$on("touchend", this.onTouchEnd);
         },
         /* onMove onEnd 触发在移动 or 停止
          * @param x          onTouchMove  ---->clientX
@@ -198,20 +148,19 @@ var pullLoad = Vue.extend({
         onMove: function (x, y, scrollTop, scrollH, conH) {
             var diffX = x - this.startX,
                 diffY = y - this.startY;
-                console.log(this.startY, y,"1")
             //判断垂直移动距离是否大于5 && 横向移动距离小于纵向移动距离 （绝对值小于5判断为误操作，不影响）
             if (Math.abs(diffY) > 5 && Math.abs(diffY) > Math.abs(diffX)) {
                 //滚动距离小于设定值 &&回调onPullDownMove 函数，并且回传位置值
                 if (diffY > 5 && scrollTop < this.opts.offsetScrollTop) { //offsetScrollTop:2 
                     // //阻止执行浏览器默认动作
                     // event.preventDefault();
-                    console.log(this.startY, y,"2")
+
                     this.onPullDownMove(this.startY, y);
                 } //滚动距离距离底部小于设定值
                 else if (diffY < 0 && (scrollH - scrollTop - conH) < this.opts.distanceBottom) {
                     //阻止执行浏览器默认动作
                     // event.preventDefault();
-                    console.log(this.startY, y,"3")
+                    console.log('是否执行下拉动作。。。。')
                     this.onPullUpMove(this.startY, y);
                 }
             }
@@ -227,6 +176,7 @@ var pullLoad = Vue.extend({
                     this.onPullDownRefresh();
                 } else if (diffY < 0 && (scrollH - scrollTop - conH) < this.opts.distanceBottom) {
                     //回调onPullUpLoad 函数，即满足刷新条件
+                    console.log("是否执行上拉刷新动作")
                     this.onPullUpLoad();
                 } else {
                     //回调clearPullDownMove 函数，取消刷新动作
@@ -238,17 +188,7 @@ var pullLoad = Vue.extend({
          * destory  销毁 但没有被任何调用
          * */
         destory: function () {
-            removeEvent(this.wrapper, "touchstart", this.onTouchStart);
-            removeEvent(this.wrapper, "touchmove", this.onTouchMove);
-            removeEvent(this.wrapper, "touchend", this.onTouchEnd);
-            this.opts = {};
-            this.container = null; //具有scroll的容器
-            this.wrapper = null; //结构外包围元素
-            this.loaderBody = null; //DOM 对象
-            this.loaderSymbol = null; //DOM 对象
-            this.loaderBtn = null; //DOM 对象
-            this.loaderState = STATS.init;
-            this.hasMore = true; //是否有加载更多
+           
         },
         /**
          * onTouchStart 移动开始的时候
@@ -256,11 +196,11 @@ var pullLoad = Vue.extend({
          * description 给this.startX and startY 赋值
          * */
         onTouchStart: function (event) {
-            
+
             var targetEvent = event.changedTouches[0],
                 startX = targetEvent.clientX,
                 startY = targetEvent.clientY;
-            
+
             this.startX = startX;
             this.startY = startY;
         },
@@ -270,14 +210,14 @@ var pullLoad = Vue.extend({
          * description 调用this.onMove(startX, startY, scrollTop, scrollH, conH)
          * */
         onTouchMove: function (event) {
-               
+
             var targetEvent = event.changedTouches[0],
                 startX = targetEvent.clientX,
                 startY = targetEvent.clientY,
                 scrollTop = this.container.scrollTop,
                 scrollH = this.container.scrollHeight,
                 conH = this.container === document.body ? document.documentElement.clientHeight : this.container.offsetHeight;
-            console.log(startX, startY, scrollTop, scrollH, conH);
+        
             this.onMove(startX, startY, scrollTop, scrollH, conH);
         },
         /**
@@ -303,17 +243,15 @@ var pullLoad = Vue.extend({
          * description 通过translate3d 最终回弹到50px
          */
         setChange: function (pullHeight, state) {
-            console.log(pullHeight,state)
             var lbodyTop = pullHeight !== 0 ? 'translate3d(0, ' + pullHeight + 'px, 0)' : "",
                 symbolTop = pullHeight - 50 > 0 ? pullHeight - 50 : 0,
                 lSymbol = symbolTop !== 0 ? 'translate3d(0, ' + symbolTop + 'px, 0)' : "";
 
             this.setClassName(state);
             this.loaderBody = document.querySelectorAll(".tloader-body")[0];
-           
 
             this.loaderSymbol = document.querySelectorAll(".tloader-symbol")[0];
-            
+
             this.loaderBody.style.WebkitTransform = lbodyTop; //loaderBody ------>  .tloader-body
             this.loaderBody.style.transform = lbodyTop;
             this.loaderSymbol.style.WebkitTransform = lSymbol; //loaderSymbol------>  .tloader-symbol
@@ -324,9 +262,9 @@ var pullLoad = Vue.extend({
          * description  给 '.test-div' 重写类名     
          */
         setClassName: function (state) {
-            this.loaderState = state;
-            console.log(this.wrapper.className,'问题出在这里')
+            this.loaderState = state;           
             this.wrapper.className = 'tloader state-' + state; // '.test-div'
+            this.$emit('classchange', this.wrapper.className);
         },
         /**
          * setEndState  设置动作结束状态 height:0
@@ -338,17 +276,22 @@ var pullLoad = Vue.extend({
          * setNoMoreState 设置没有再多的状态
          * */
         setNoMoreState: function () {
-            this.loaderBtn.style.display = "block";
-            this.hasMore = false;
+            this.pullupstyle = {
+                display: 'block'
+            }
+            // this.loaderBtn.style.display = "block";
+            this.opts.hasMore = false;
         },
         /**
          * resetLoadMore 关闭底部状态
          * 
          * */
         resetLoadMore: function () {
-            this.loaderBtn = document.querySelectorAll(".tloader-btn")[0];
-            this.loaderBtn.style.display = "none";
-            this.hasMore = true;
+            this.pullupstyle = {
+                display: 'none'
+            }
+            // this.loaderBtn.style.display = "none";
+            this.opts.hasMore = true;
         },
         /* onPullDownMove 下拉移动
          * @param startY     onTouchStart ---->clientX
@@ -380,35 +323,34 @@ var pullLoad = Vue.extend({
          * 
          * */
         onPullDownRefresh: function () {
+
             var that = this;
+
             if (this.loaderState === STATS.refreshing) {
                 return false;
+
             } else if (this.loaderState === STATS.pulling) {
                 this.setEndState();
+
             } else {
                 this.setChange(0, STATS.refreshing);
                 this.resetLoadMore();
-                if (typeof this.opts.onRefresh === "function") {
-                    this.opts.onRefresh(
-                        bind(function (status) { //status------> true 刷新成功... || false -----> 没有更新数据
 
-                            if (status == true) {
-                                this.setChange(0, STATS.refreshed);
-                                setTimeout(function () {
-                                    that.setChange(0, STATS.init);
-                                }, 1000);
-                            } else {
-                                this.setChange(0, STATS.nomore);
-                                setTimeout(function () {
-                                    that.setChange(0, STATS.init);
-                                }, 1000);
-                            }
-
-
-                        }, this)
-                    )
-                }
+                this.$emit('onpulldownrefresh', function (status) { //status------> true 刷新成功... || false -----> 没有更新数据
+                    if (status == true) {
+                        that.setChange(0, STATS.refreshed);
+                        setTimeout(function () {
+                            that.setChange(0, STATS.init);
+                        }, 1000);
+                    } else {
+                        that.setChange(0, STATS.nomore);
+                        setTimeout(function () {
+                            that.setChange(0, STATS.init);
+                        }, 1000);
+                    }
+                });
             }
+
         },
         /**
          * clearPullDownMove  清除下拉移动动作
@@ -420,31 +362,30 @@ var pullLoad = Vue.extend({
          * @param y       touchStart  ---> clientY
          * */
         onPullUpMove: function (startY, y) {
-            if (!this.hasMore || this.loaderState === STATS.loading) {
+            let that = this;
+            if (!this.opts.hasMore || this.loaderState === STATS.loading) {
                 return false;
             }
-            if (typeof this.opts.onLoadMore === "function") {
-                this.setChange(0, STATS.loading);
-                // console.info(this.state);
-                this.opts.onLoadMore(bind(function (isNoMore) { //传一个参数
-                    this.setEndState();
-                    if (isNoMore) {
-                        this.setNoMoreState();
-                    }
-                }, this));
-            }
+
+            this.setChange(0, STATS.loading);
+            this.$emit('onloadmore', function (status) { // status -->  true  还有更多的数据   false  没有更多的数据
+                that.setEndState();
+                if (status) {
+                    that.setNoMoreState();
+                    setTimeout(function () {
+                        that.pullupstyle = {
+                            display: 'none'
+                        }
+                    }, 2000)
+                }
+            });
         },
         /**
          * onPullUpLoad  上拉加载中
          * */
-        onPullUpLoad: function () {}
-    },
-    ready:function(){
-        var opts = this.opts;
-        this.loaderBody = opts.wrapper.querySelectorAll(".tloader-body")[0];
-        this.loaderSymbol = opts.wrapper.querySelectorAll(".tloader-symbol")[0];
-        this.loaderBtn = opts.wrapper.querySelectorAll(".tloader-btn")[0];
-        
+        onPullUpLoad: function () {
+
+        }
     },
     mounted: function () {
         this.$nextTick(function () {
@@ -452,37 +393,4 @@ var pullLoad = Vue.extend({
         });
     },
 })
-
-
-
 Vue.component('pull-load', pullLoad);
-
-
-
-
-
-var test = Vue.extend({
-    props: ["a", "b"],
-    data: function () {
-        return {
-            a: '',
-            b: ''
-        }
-    },
-    computed: function () {
-        a = this.props.a;
-        b = this.props.b;
-    },
-    template: `
-        <div>
-            <p>{{a}}</p>
-            <ul>
-                <li v-for="item in b">{{item}}</li>
-            </ul>
-
-        </div>
-    
-    `,
-
-})
-Vue.component('test', test);
