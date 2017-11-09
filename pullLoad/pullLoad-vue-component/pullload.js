@@ -135,7 +135,6 @@ var pullLoad = Vue.extend({
             //将 extendFns 数组所列函数 及 'onTouchStart','onTouchMove','onTouchEnd' 进行 this 绑定。
             bindAll(extendFns.concat(['onTouchStart', 'onTouchMove', 'onTouchEnd']), this);
             //创建参数对象把 extendFns 设置成参数，同时把 opts 传递进来的参数整合上。
-
         },
         /* onMove onEnd 触发在移动 or 停止
          * @param x          onTouchMove  ---->clientX
@@ -248,6 +247,7 @@ var pullLoad = Vue.extend({
                 lSymbol = symbolTop !== 0 ? 'translate3d(0, ' + symbolTop + 'px, 0)' : "";
 
             this.setClassName(state);
+
             this.loaderBody = document.querySelectorAll(".tloader-body")[0];
 
             this.loaderSymbol = document.querySelectorAll(".tloader-symbol")[0];
