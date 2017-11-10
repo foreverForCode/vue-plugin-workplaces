@@ -1,0 +1,62 @@
+*{
+    font-size: 0.16rem;
+}
+
+
+.m-tab{
+    width:100%;
+    height: auto;
+    font-size: 0.16rem
+}
+
+.m-tab ul{
+    box-sizing: border-box;
+    width:100%;
+    height: 0.5rem;
+    border-bottom:1px solid #ccc;
+    
+}
+
+.m-tab ul li{
+    float: left;
+    width:25%;
+    text-align:center;
+    line-height: 0.5rem;
+    cursor: pointer;
+    position: relative
+    
+}
+.m-tab ul li:after{
+    content: "";
+    width: 1px;
+    height: 0.3rem;
+    position: absolute;
+    right: 0px;
+    top: 0.1rem;
+    background-color: #ccc;
+    transform: scaleX(0.5);
+}
+.m-tab ul li:last-child::after{
+    width:0px;
+}
+
+.m-tab ul li a{
+    height: 0.5rem;
+    text-decoration: none;
+    color:#000;
+      
+}
+
+.m-tab ul .active:before{
+    content: "";
+    width: 70%;
+    height: 2px;
+    position: absolute;
+    bottom: 0px;
+    left: 15%;
+    background-color: #f0f;
+}
+
+.m-tab ul .active a{
+    color:#f0f
+}

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>pullload 以 body 为滚动容器</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+  <script src="./lib/vue.min.js"></script>
+  <script src="./lib/flexible.js"></script>
+  <link rel="stylesheet" href="./css/reset.css">
+  <script src="./tab.js"></script>
+ 
+  <link rel="stylesheet" href="css/tab.css">
+</head>
+
+<body>
+  <div id="test_div">
+      <tab>
+       
+          <tab-panel v-for="item in tabList" v-html="item.panelContent"></tab-panel>
+      </tab>
+  </div>
+
+</body>
+<script>
+  var app = new Vue({
+    el: '#test_div',
+    data: {
+      msg: 'hello world',
+      tabList:[              // 模拟数据
+          {
+            _uid:0,
+            title:'第一项',
+            panelContent:'这是第一项的内容'
+          },
+          {
+            _uid:1,
+            title:'第二项',
+            panelContent:'这是第二项的内容'
+          },
+          {
+            _uid:2,
+            title:'第三项',
+            panelContent:'这是第三项的内容'
+          },
+          {
+            _uid:3,
+            title:'第四项',
+            panelContent:'这是第四项的内容'
+          },
+
+      ]
+    },
+    methods: {
+
+    },
+
+
+  });
+</script>
+
+</html>

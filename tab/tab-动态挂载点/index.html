@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>pullload 以 body 为滚动容器</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+  <script src="./lib/vue.min.js"></script>
+  <script src="./lib/flexible.js"></script>
+  <link rel="stylesheet" href="./css/reset.css">
+  <script src="./tab.js"></script>
+ 
+  <link rel="stylesheet" href="css/tab.css">
+</head>
+
+<body>
+  <div id="test_div">
+      <tab></tab>
+  </div>
+
+</body>
+<script>
+  var app = new Vue({
+    el: '#test_div',
+    data: {
+      msg: 'hello world'
+    },
+    methods: {
+
+    },
+
+
+  });
+</script>
+
+</html>
