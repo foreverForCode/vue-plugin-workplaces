@@ -3,37 +3,79 @@ var tab = Vue.extend({
     data: function () {
         return {
             optsClass: 'm-tab',
-            mNavList: [
-            ],
+            navList: [],
             activeIndex: 0,
-            tempIndex: 0
+            tmpIndex: 0
         }
     },
-    props:{
+    props: {
         change: Function,
         callback: Function,
     },
     template: `
         <div :class="optsClass">
-            <ul v-if="mNavList.length>0">
-                <li v-for="item, key in mNavList" :key = "key" :class="item._uid == activeIndex?'active':''"
-                @click="changeHandler(item._uid)"
+            <ul v-show="navList.length>0">
+                <li v-for="item, key in navList" 
+                :key = "key" 
+                :class="item._uid == activeIndex?'active':''"
+                @click="changeHandler(item._uid, item.label, item.tabkey)"
                 >
-                    <a>{{item.label}}</a>
+                <a>{{item.label}}</a>
                 </li>
             </ul>
-            <div class="tab-panel-items">
+            <div class="yd-tab-panel">
                 <slot></slot>
             </div>
         </div>
     `,
     methods: {
-        init:function(){
-            
+        init(update, status) {
+            const tabPanels = this.$children.filter(item => item.$options.name === 'yd-tab-panel');
+            console.log(tabPanels)
+            let num = 0;
 
+            if (!update) {
+                this.navList = [];
+            }
+
+            tabPanels.forEach((panel, index) => {
+                if (status === 'label') {
+                    return this.navList[index] = panel;
+                }
+
+                if (!update) {
+                    this.navList.push({
+                        _uid: panel._uid,
+                        label: panel.label,
+                        tabkey: panel.tabkey
+                    });
+                }
+
+                if (panel.active) {
+                    this.activeIndex = this.tmpIndex = panel._uid;
+                    this.emitChange(panel.label, panel.tabkey);
+                } else {
+                    ++num;
+                    if (num >= tabPanels.length) {
+                        this.activeIndex = this.tmpIndex = tabPanels[0]._uid;
+                        this.emitChange(tabPanels[0].label, tabPanels[0].tabkey);
+                    }
+                }
+            });
         },
-        changeHandler: function (key) {
-            this.activeIndex = key;
+        emitChange(label, tabkey) {
+            // TODO 参数更名，即将删除
+            if (this.change) {
+                this.change(label, tabkey);
+                console.warn('From VUE-YDUI: The parameter "change" is destroyed, please use "callback".');
+            }
+            this.callback && this.callback(label, tabkey);
+        },
+        changeHandler(uid, label, tabkey) {
+            if (this.tmpIndex != uid) {
+                this.activeIndex = this.tmpIndex = uid;
+                this.emitChange(label, tabkey);
+            }
         }
     }
 })
@@ -44,26 +86,37 @@ Vue.component('tab', tab);
 var tabPanel = Vue.extend({
     data: function () {
         return {
-            active:''
+            active: ''
         }
     },
+    props: {
+        label: String,
+        active: Boolean,
+        tabkey: [String, Number]
+    },
     template: `
-        <div>
-            <div class="yd-tab-panel-item">
-                 <slot></slot>
-            </div>
+        <div class="yd-tab-panel-item" :class="classes">
+            <slot></slot>
         </div>
     `,
-    methods: {
-
+    computed: {
+        classes() {
+            return this.$parent.activeIndex == this._uid ? 'yd-tab-active' : '';
+        }
     },
-    mounted:function(){
-        this.$nextTick(()=>{
-            this.$parent.init()
-        })
+    watch: {
+        active() {
+            this.$parent.init(true);
+        },
+        label() {
+            this.$parent.init(false, 'label');
+        }
+    },
+    mounted() {
+        this.$nextTick(() => {
+            this.$parent.init(false);
+        });
     }
 })
 
 Vue.component('tab-panel', tabPanel);
-
-
